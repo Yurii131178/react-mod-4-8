@@ -309,53 +309,53 @@ const queryData = useQuery({
 // 💡Подивіться приклад у редакторі – він демонструє, як усе працює разом
 //.......................................................................
 
-import { useState } from 'react';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import ReactPaginate from 'react-paginate';
-import SearchForm from '../SearchForm/SearchForm';
-import ArticleList from '../ArticleList/ArticleList';
-import { fetchArticles } from '../sevices/ArticleServis';
-import css from './App.module.css';
+// import { useState } from 'react';
+// import { useQuery, keepPreviousData } from '@tanstack/react-query';
+// import ReactPaginate from 'react-paginate';
+// import SearchForm from '../SearchForm/SearchForm';
+// import ArticleList from '../ArticleList/ArticleList';
+// import { fetchArticles } from '../sevices/ArticleServis';
+// import css from './App.module.css';
 
-export default function App() {
-  const [topic, setTopic] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ['articles', topic, currentPage],
-    queryFn: () => fetchArticles(topic, currentPage),
-    enabled: topic !== '',
-    placeholderData: keepPreviousData,
-  });
+// export default function App() {
+//   const [topic, setTopic] = useState('');
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const { data, isLoading, isError, isSuccess } = useQuery({
+//     queryKey: ['articles', topic, currentPage],
+//     queryFn: () => fetchArticles(topic, currentPage),
+//     enabled: topic !== '',
+//     placeholderData: keepPreviousData,
+//   });
 
-  const totalPages = data?.nbPages ?? 0;
+//   const totalPages = data?.nbPages ?? 0;
 
-  const handleSearch = async (newTopic: string) => {
-    setTopic(newTopic);
-    setCurrentPage(1);
-  };
+//   const handleSearch = async (newTopic: string) => {
+//     setTopic(newTopic);
+//     setCurrentPage(1);
+//   };
 
-  return (
-    <>
-      <SearchForm onSubmit={handleSearch} />
-      {isSuccess && totalPages > 1 && (
-        <ReactPaginate
-          pageCount={totalPages}
-          pageRangeDisplayed={5}
-          marginPagesDisplayed={1}
-          onPageChange={({ selected }) => setCurrentPage(selected + 1)}
-          forcePage={currentPage - 1}
-          containerClassName={css.pagination}
-          activeClassName={css.active}
-          nextLabel="→"
-          previousLabel="←"
-        />
-      )}
-      {isLoading && <p>Loading data, please wait...</p>}
-      {isError && <p>Whoops, something went wrong! Please try again!</p>}
-      {data && data.hits.length > 0 && <ArticleList items={data.hits} />}
-    </>
-  );
-}
+//   return (
+//     <>
+//       <SearchForm onSubmit={handleSearch} />
+//       {isSuccess && totalPages > 1 && (
+//         <ReactPaginate
+//           pageCount={totalPages}
+//           pageRangeDisplayed={5}
+//           marginPagesDisplayed={1}
+//           onPageChange={({ selected }) => setCurrentPage(selected + 1)}
+//           forcePage={currentPage - 1}
+//           containerClassName={css.pagination}
+//           activeClassName={css.active}
+//           nextLabel="→"
+//           previousLabel="←"
+//         />
+//       )}
+//       {isLoading && <p>Loading data, please wait...</p>}
+//       {isError && <p>Whoops, something went wrong! Please try again!</p>}
+//       {data && data.hits.length > 0 && <ArticleList items={data.hits} />}
+//     </>
+//   );
+// }
 
 //...........................................................
 // Ось пояснення пропсів для компонента ReactPaginate:
@@ -410,5 +410,12 @@ export default function App() {
 
 // Визначає текст або символ для кнопки "Попередня сторінка". У цьому випадку "←".
 //💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡
-//                              MODULE 4 / 8 FORMIK
-//💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡💡
+import OrderForm from '../OrderForm/OrderForm';
+
+export default function App() {
+  return (
+    <>
+      <OrderForm />
+    </>
+  );
+}
