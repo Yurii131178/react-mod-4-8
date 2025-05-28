@@ -479,16 +479,239 @@ actions – набір методів, які надає Formik для керу�
 
  */
 //✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+// import { useId } from 'react';
+// import { Formik, Form, Field, FormikHelpers } from 'formik';
+// import css from './OrderForm.module.css';
+// import * as Yup from 'yup';
+
+// interface OrderFormValues {
+//   username: string;
+//   email: string;
+//   delivery: string;
+//   deliveryTime: string;
+//   restrictions: string[];
+//   message: string;
+// }
+
+// const initialValues: OrderFormValues = {
+//   username: '',
+//   email: '',
+//   delivery: 'pickup',
+//   deliveryTime: '',
+//   restrictions: [],
+//   message: '',
+// };
+
+// export default function OrderForm() {
+//   const fieldId = useId();
+
+//   const handleSubmit = (
+//     values: OrderFormValues,
+//     actions: FormikHelpers<OrderFormValues>
+//   ) => {
+//     console.log('Submitted order:', values);
+//     actions.resetForm();
+//   };
+
+//   return (
+//     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+//       <Form className={css.form}>
+//         <fieldset className={css.fieldset}>
+//           <legend className={css.legend}>Client Info</legend>
+
+//           <label htmlFor={`${fieldId}-username`} className={css.label}>
+//             Name
+//           </label>
+//           <Field
+//             type="text"
+//             name="username"
+//             id={`${fieldId}-username`}
+//             className={css.input}
+//           />
+
+//           <label htmlFor={`${fieldId}-email`} className={css.label}>
+//             Email
+//           </label>
+//           <Field
+//             type="email"
+//             name="email"
+//             id={`${fieldId}-email`}
+//             className={css.input}
+//           />
+//         </fieldset>
+
+//         <fieldset className={css.fieldset}>
+//           <legend className={css.legend}>Delivery method</legend>
+
+//           <label className={css.option}>
+//             <Field type="radio" name="delivery" value="pickup" />
+//             Pickup
+//           </label>
+//           <label className={css.option}>
+//             <Field type="radio" name="delivery" value="courier" />
+//             Courier
+//           </label>
+//           <label className={css.option}>
+//             <Field type="radio" name="delivery" value="drone" />
+//             Drone delivery
+//           </label>
+//         </fieldset>
+
+//         <fieldset className={css.fieldset}>
+//           <legend className={css.legend}>Dietary restrictions</legend>
+
+//           <label className={css.option}>
+//             <Field type="checkbox" name="restrictions" value="vegan" />
+//             Vegan
+//           </label>
+//           <label className={css.option}>
+//             <Field type="checkbox" name="restrictions" value="gluten-free" />
+//             Gluten-free
+//           </label>
+//           <label className={css.option}>
+//             <Field type="checkbox" name="restrictions" value="nut-free" />
+//             Nut-free
+//           </label>
+//         </fieldset>
+
+//         <label htmlFor={`${fieldId}-deliveryTime`} className={css.label}>
+//           Preferred delivery time
+//         </label>
+//         <Field
+//           as="select"
+//           name="deliveryTime"
+//           id={`${fieldId}-deliveryTime`}
+//           className={css.input}
+//         >
+//           <option value="">-- Choose delivery time --</option>
+//           <option value="morning">Morning (8:00–12:00)</option>
+//           <option value="afternoon">Afternoon (12:00–16:00)</option>
+//           <option value="evening">Evening (16:00–20:00)</option>
+//         </Field>
+
+//         <label htmlFor={`${fieldId}-message`} className={css.label}>
+//           Additional message
+//         </label>
+//         <Field
+//           as="textarea"
+//           name="message"
+//           rows={4}
+//           id={`${fieldId}-message`}
+//           className={css.textarea}
+//         />
+
+//         <button type="submit" className={css.button}>
+//           Place order
+//         </button>
+//       </Form>
+//     </Formik>
+//   );
+// }
+
+//✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+
+/**------------------Валідація з Yup-------------------------
+Валідація – це перевірка введених користувачем значень перед відправленням. Formik підтримує інтеграцію з Yup – потужною бібліотекою для побудови схем валідації.
+
+Покращує досвід користувача (не треба чекати відповіді з сервера)
+Захищає від некоректного введення
+Дає змогу показувати помилки прямо біля полів
+
+Підключення Yup
+
+Встановлюємо бібліотеку Yup:
+
+npm install yup
+
+Імпортуємо бібліотеку валідації в компонент форми:
+
+import * as Yup from "yup";
+
+//✅✅
+
+🧠 Formik підтримує Yup "з коробки". Щоб увімкнути валідацію – потрібно створити схему валідації і передати її в проп validationSchema компонента Formik.
+
+Як працює схема Yup
+Yup використовує "схеми", що описують структуру об'єкта та правила перевірки. Наприклад:
+
+const Schema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+});
+
+Це означає:
+
+Об’єкт повинен мати властивість username
+Це має бути рядок (string)
+Він обов’язковий (required)
+Якщо його нема – показати повідомлення "Username is required"
+
+🧠 Кожен ключ в об’єкті повинен відповідати полю в initialValues.
+
+//✅✅
+Створимо схему валідації блоку "Client Info" з полями username та email.
+
+
+const OrderFormSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .max(30, "Name is too long")
+    .required("Name is required"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+});
+
+Функції Yup.string(), Yup.min(), Yup.max(), Yup.required() і інші – це функції-валідатори, які дозволяють додати певний критерій валідації. Кожен валідатор може приймати від нуля до двох параметрів.
+
+перший – це критерій валідації, наприклад, довжина рядка чи значення числа
+другий – це рядок, який буде використаний як помилка у разі валідації.
+
+🧠 Не у всіх валідаторів є критерії або повідомлення про помилку, щоб це дізнатися, необхідно дивитися в документацію Yup.*/
+//✅✅//✅✅//✅✅//✅✅//✅✅//✅✅//✅✅
+// Підключаємо схему до Formik через пропс validationSchema, в який треба передати схему валідації Yup.
+
+// <Formik
+//   initialValues={initialValues}
+//   validationSchema={OrderFormSchema}
+//   onSubmit={handleSubmit}
+// >
+//   {/* форма */}
+// </Formik>
+
+// Після додавання валідації, ми не зможемо відправити форму, якщо в одному з полів буде введено не валідне значення.
+
+// Formik проводить валідацію автоматично:
+
+// Після виходу з поля.
+// Після кожної зміни.
+// Перед сабмітом.
+
+// 🧠 Formik відстежує, якщо користувач торкався поля. Це поле переходить в стан touched і лише тоді показується помилка.
+
+// Відображення помилок
+
+// Formik надає компонент ErrorMessage, який можна розмістити під полем, щоб показувати текст помилки.
+
+// <Field type="text" name="username" />
+// <ErrorMessage name="username" component="span" className={css.error} />
+
+// Проп name має збігатися з іменем Field
+// component="span" вказує, що помилка виводиться у тезі span, що зручно для стилів.
+
+// 💡 Подивіться приклад у редакторі – він демонструє, як усе працює разом.
+//...............................................................................
+//...............................................................................
 import { useId } from 'react';
-import { Formik, Form, Field, FormikHelpers } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
 import css from './OrderForm.module.css';
 
 interface OrderFormValues {
   username: string;
   email: string;
   delivery: string;
-  deliveryTime: string;
   restrictions: string[];
+  deliveryTime: string;
   message: string;
 }
 
@@ -496,10 +719,28 @@ const initialValues: OrderFormValues = {
   username: '',
   email: '',
   delivery: 'pickup',
-  deliveryTime: '',
   restrictions: [],
+  deliveryTime: '',
   message: '',
 };
+
+const validationSchema = Yup.object().shape({
+  username: Yup.string()
+    .min(2, 'Name too short')
+    .max(50, 'Name too long')
+    .required('Name is required'),
+  email: Yup.string()
+    .email('Invalid email address')
+    .required('Email is required'),
+  delivery: Yup.string()
+    .oneOf(['pickup', 'courier', 'drone'], 'Invalid delivery method')
+    .required('Delivery method is required'),
+  restrictions: Yup.array().of(Yup.string()),
+  deliveryTime: Yup.string().required('Select delivery time'),
+  message: Yup.string()
+    .min(5, 'Message too short')
+    .max(300, 'Message too long'),
+});
 
 export default function OrderForm() {
   const fieldId = useId();
@@ -508,72 +749,83 @@ export default function OrderForm() {
     values: OrderFormValues,
     actions: FormikHelpers<OrderFormValues>
   ) => {
-    console.log('Submitted order:', values);
+    console.log('Form submitted:', values);
     actions.resetForm();
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
       <Form className={css.form}>
         <fieldset className={css.fieldset}>
           <legend className={css.legend}>Client Info</legend>
 
-          <label htmlFor={`${fieldId}-username`} className={css.label}>
-            Name
-          </label>
+          <label htmlFor={`${fieldId}-username`}>Name</label>
           <Field
             type="text"
             name="username"
             id={`${fieldId}-username`}
             className={css.input}
           />
+          <ErrorMessage
+            name="username"
+            component="span"
+            className={css.error}
+          />
 
-          <label htmlFor={`${fieldId}-email`} className={css.label}>
-            Email
-          </label>
+          <label htmlFor={`${fieldId}-email`}>Email</label>
           <Field
             type="email"
             name="email"
             id={`${fieldId}-email`}
             className={css.input}
           />
+          <ErrorMessage name="email" component="span" className={css.error} />
         </fieldset>
 
         <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Delivery method</legend>
+          <legend className={css.legend}>Delivery Method</legend>
 
-          <label className={css.option}>
+          <label className={css.radioLabel}>
             <Field type="radio" name="delivery" value="pickup" />
             Pickup
           </label>
-          <label className={css.option}>
+          <label className={css.radioLabel}>
             <Field type="radio" name="delivery" value="courier" />
             Courier
           </label>
-          <label className={css.option}>
+          <label className={css.radioLabel}>
             <Field type="radio" name="delivery" value="drone" />
             Drone delivery
           </label>
+          <ErrorMessage
+            name="delivery"
+            component="span"
+            className={css.error}
+          />
         </fieldset>
 
         <fieldset className={css.fieldset}>
-          <legend className={css.legend}>Dietary restrictions</legend>
+          <legend className={css.legend}>Dietary Restrictions</legend>
 
-          <label className={css.option}>
+          <label className={css.checkboxLabel}>
             <Field type="checkbox" name="restrictions" value="vegan" />
             Vegan
           </label>
-          <label className={css.option}>
+          <label className={css.checkboxLabel}>
             <Field type="checkbox" name="restrictions" value="gluten-free" />
             Gluten-free
           </label>
-          <label className={css.option}>
+          <label className={css.checkboxLabel}>
             <Field type="checkbox" name="restrictions" value="nut-free" />
             Nut-free
           </label>
         </fieldset>
 
-        <label htmlFor={`${fieldId}-deliveryTime`} className={css.label}>
+        <label htmlFor={`${fieldId}-deliveryTime`}>
           Preferred delivery time
         </label>
         <Field
@@ -587,17 +839,21 @@ export default function OrderForm() {
           <option value="afternoon">Afternoon (12:00–16:00)</option>
           <option value="evening">Evening (16:00–20:00)</option>
         </Field>
+        <ErrorMessage
+          name="deliveryTime"
+          component="span"
+          className={css.error}
+        />
 
-        <label htmlFor={`${fieldId}-message`} className={css.label}>
-          Additional message
-        </label>
+        <label htmlFor={`${fieldId}-message`}>Additional notes</label>
         <Field
           as="textarea"
           name="message"
-          rows={4}
           id={`${fieldId}-message`}
+          rows={5}
           className={css.textarea}
         />
+        <ErrorMessage name="message" component="span" className={css.error} />
 
         <button type="submit" className={css.button}>
           Place order
@@ -607,4 +863,4 @@ export default function OrderForm() {
   );
 }
 
-//✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅
+//...............................................................................
