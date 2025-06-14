@@ -205,7 +205,7 @@ interface OrderFormValues {
 //-----------------------------💡💡💡Відправка форми💡💡💡--------------------------
 // Formik самостійно обробляє відправку форми та збирає значення полів. При відправці форми викликається колбек-функція, яку ми передаємо пропсом onSubmit до компонента Formik. Найкраща практика – створити окрему іменовану функцію handleSubmit і передати її як значення пропса.
 
-// Імпортуємо вбудований тип FormikHelpers
+//Імпортуємо вбудований тип FormikHelpers
 // import { Formik, Form, Field, FormikHelpers } from 'formik';
 
 // interface OrderFormValues {
@@ -735,7 +735,9 @@ const validationSchema = Yup.object().shape({
   delivery: Yup.string()
     .oneOf(['pickup', 'courier', 'drone'], 'Invalid delivery method')
     .required('Delivery method is required'),
-  restrictions: Yup.array().of(Yup.string()),
+  restrictions: Yup.array()
+    .of(Yup.string())
+    .min(1, 'Select at least one restriction'),
   deliveryTime: Yup.string().required('Select delivery time'),
   message: Yup.string()
     .min(5, 'Message too short')
@@ -823,6 +825,11 @@ export default function OrderForm() {
             <Field type="checkbox" name="restrictions" value="nut-free" />
             Nut-free
           </label>
+          <ErrorMessage
+            name="restrictions"
+            component="span"
+            className={css.error}
+          />
         </fieldset>
 
         <label htmlFor={`${fieldId}-deliveryTime`}>
